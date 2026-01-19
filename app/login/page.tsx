@@ -70,18 +70,31 @@ export default function LoginPage() {
 
             if (authError) {
                 setError('Invalid username or password');
+                setLoading(false);
                 return;
             }
 
             if (data.user) {
                 // Check user role and redirect accordingly
-                const { data: profile } = await (supabase
+                const { data: profile, error: profileError } = await (supabase
                     .from('users') as any)
                     .select('role')
                     .eq('id', data.user.id)
                     .single();
 
-                if (profile?.role === 'super_admin') {
+                if (profileError) {
+                    setError('User profile not found. Please contact administrator.');
+                    setLoading(false);
+                    return;
+                }
+
+                if (!profile) {
+                    setError('User profile not found. Please contact administrator.');
+                    setLoading(false);
+                    return;
+                }
+
+                if (profile.role === 'super_admin') {
                     router.replace('/admin');
                 } else {
                     router.replace('/dashboard');
@@ -89,7 +102,11 @@ export default function LoginPage() {
             }
         } catch (err: any) {
             if (err.errors) {
+                // Zod validation errors
                 setError(err.errors[0]?.message || 'Invalid input');
+            } else if (err.message) {
+                // Other errors with messages
+                setError(err.message);
             } else {
                 setError('An error occurred. Please try again.');
             }

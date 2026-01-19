@@ -6,8 +6,8 @@ export async function middleware(request: NextRequest) {
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseAnonKey) {
-        console.error('Missing Supabase environment variables in middleware');
-        // Don't redirect if already on login
+        // Missing environment variables - allow through to prevent blocking
+        // The app will handle the error when trying to use Supabase
         if (request.nextUrl.pathname === '/login') {
             return NextResponse.next();
         }
@@ -57,23 +57,11 @@ export async function middleware(request: NextRequest) {
         cookie.name.startsWith('sb-')
     );
 
-    // Debug logging (remove after fixing)
-    console.log('[Middleware] Path:', pathname);
-    console.log('[Middleware] Has Supabase cookies:', hasSupabaseCookies);
-    if (hasSupabaseCookies) {
-        console.log('[Middleware] Cookie names:', allCookies.filter(c => c.name.startsWith('sb-')).map(c => c.name));
-    }
-
     // Try to get user
     const {
         data: { user },
         error: authError,
     } = await supabase.auth.getUser();
-
-    console.log('[Middleware] User:', user ? `Found (${user.id})` : 'Not found');
-    if (authError) {
-        console.log('[Middleware] Auth error:', authError.message);
-    }
 
     // Helper to create redirect URL
     const createRedirectUrl = (path: string) => {
@@ -87,15 +75,9 @@ export async function middleware(request: NextRequest) {
         // CRITICAL: Never redirect to login if:
         // 1. We're already on login (shouldn't happen due to early return, but double-check)
         // 2. We have Supabase auth cookies (user is authenticating)
-        if (pathname === '/login') {
-            console.log('[Middleware] NOT redirecting: Already on /login');
+        if (pathname === '/login' || hasSupabaseCookies) {
             return response;
         }
-        if (hasSupabaseCookies) {
-            console.log('[Middleware] NOT redirecting: Has Supabase cookies');
-            return response;
-        }
-        console.log('[Middleware] REDIRECTING to /login from:', pathname);
         return NextResponse.redirect(createRedirectUrl('/login'));
     };
 
@@ -131,19 +113,16 @@ export async function middleware(request: NextRequest) {
         // Allow through to prevent race conditions where cookies are set but getUser() hasn't picked them up yet
         // The page will handle showing errors if auth truly fails
         if (hasSupabaseCookies) {
-            console.log('[Middleware] Allowing through: Has Supabase cookies');
             return response;
         }
         
         // Check if request is coming from login page (client-side redirect)
         const referer = request.headers.get('referer');
-        console.log('[Middleware] Referer:', referer);
         if (referer) {
             try {
                 const refererUrl = new URL(referer);
                 if (refererUrl.pathname === '/login') {
                     // Coming from login - allow through (user just logged in)
-                    console.log('[Middleware] Allowing through: Coming from /login');
                     return response;
                 }
             } catch (e) {
@@ -152,7 +131,6 @@ export async function middleware(request: NextRequest) {
         }
         
         // No user, no cookies, and not from login - redirect to login
-        console.log('[Middleware] Redirecting to login: No user, no cookies, not from login');
         return redirectToLogin();
     }
 
@@ -180,7 +158,6 @@ export async function middleware(request: NextRequest) {
         }
     } catch (error) {
         // On any error, allow through - page will handle it
-        console.error('Error checking profile:', error);
         return response;
     }
 
