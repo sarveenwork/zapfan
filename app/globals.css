@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFF8F0;
+  --foreground: #333333;
+  --primary: #FF6F3C;
+  --secondary: #4CAF50;
+  --alert: #FF4C4C;
+  --text-secondary: #777777;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-alert: var(--alert);
+  --color-text-secondary: var(--text-secondary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Cursor pointer for all clickable elements */
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Navbar link hover styles */
+nav a:hover {
+  color: #333333 !important;
+  border-color: #FF6F3C !important;
+}
+
+/* Link hover styles */
+a.hover\:bg-orange-400:hover {
+  background-color: #FF8F5C !important;
 }
