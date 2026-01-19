@@ -11,7 +11,6 @@ import {
     sanitizeString,
 } from '@/lib/validations/schemas';
 import { revalidatePath } from 'next/cache';
-import type { Database } from '@/lib/supabase/database.types';
 
 export async function createCompany(formData: FormData) {
     try {
@@ -25,13 +24,12 @@ export async function createCompany(formData: FormData) {
         const sanitizedName = sanitizeString(validated.name);
 
         const supabase = await createClient();
-        const insertData: Database['public']['Tables']['companies']['Insert'] = {
-            name: sanitizedName,
-            created_by: user.id,
-        };
         const { data, error } = await supabase
             .from('companies')
-            .insert(insertData)
+            .insert({
+                name: sanitizedName,
+                created_by: user.id,
+            })
             .select()
             .single();
 

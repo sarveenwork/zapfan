@@ -2,6 +2,14 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function proxy(request: NextRequest) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.error('Missing Supabase environment variables in proxy');
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
     let response = NextResponse.next({
         request: {
             headers: request.headers,
@@ -9,8 +17,8 @@ export async function proxy(request: NextRequest) {
     });
 
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseUrl,
+        supabaseAnonKey,
         {
             cookies: {
                 getAll() {
@@ -40,19 +48,30 @@ export async function proxy(request: NextRequest) {
     // Public routes
     if (pathname === '/login') {
         if (user) {
-            // Check user role to redirect appropriately
-            const { data: profile } = await supabase
-                .from('users')
-                .select('role')
-                .eq('id', user.id)
-                .single();
+            try {
+                // Check user role to redirect appropriately
+                const { data: profile, error: profileError } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single();
 
-            if (profile) {
-                if (profile.role === 'super_admin') {
-                    return NextResponse.redirect(new URL('/admin', request.url));
-                } else {
-                    return NextResponse.redirect(new URL('/dashboard', request.url));
+                if (profileError) {
+                    // If profile doesn't exist, allow login page to show
+                    return response;
                 }
+
+                if (profile) {
+                    if (profile.role === 'super_admin') {
+                        return NextResponse.redirect(new URL('/admin', request.url));
+                    } else {
+                        return NextResponse.redirect(new URL('/dashboard', request.url));
+                    }
+                }
+            } catch (error) {
+                // On error, allow login page to show
+                console.error('Error checking user profile:', error);
+                return response;
             }
         }
         return response;
@@ -64,13 +83,13 @@ export async function proxy(request: NextRequest) {
     }
 
     // Check user profile exists
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
         .from('users')
         .select('role')
         .eq('id', user.id)
         .single();
 
-    if (!profile) {
+    if (profileError || !profile) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 

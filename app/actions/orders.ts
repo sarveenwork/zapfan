@@ -18,7 +18,17 @@ export async function createOrder(formData: FormData) {
         const itemsJson = formData.get('items') as string;
         const paymentType = formData.get('payment_type') as string;
 
-        const items = JSON.parse(itemsJson);
+        if (!itemsJson || !paymentType) {
+            throw new Error('Missing required fields: items or payment_type');
+        }
+
+        let items;
+        try {
+            items = JSON.parse(itemsJson);
+        } catch (parseError) {
+            throw new Error('Invalid items JSON format');
+        }
+
         const rawData = {
             items,
             payment_type: paymentType,

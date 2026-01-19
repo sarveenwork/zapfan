@@ -146,13 +146,15 @@ export async function exportReportToCSV(startDate: string, endDate: string) {
 
             if (order.order_items && order.order_items.length > 0) {
                 order.order_items.forEach((item: any, index: number) => {
-                    const itemTotal = Number(item.item_price_snapshot) * item.quantity;
+                    const price = Number(item.item_price_snapshot) || 0;
+                    const quantity = Number(item.quantity) || 0;
+                    const itemTotal = price * quantity;
                     rows.push([
                         index === 0 ? dateStr : '',
                         index === 0 ? timeStr : '',
-                        item.item_name_snapshot,
-                        item.quantity.toString(),
-                        Number(item.item_price_snapshot).toFixed(2),
+                        item.item_name_snapshot || '',
+                        quantity.toString(),
+                        price.toFixed(2),
                         itemTotal.toFixed(2),
                         index === 0 ? order.payment_type : '',
                         index === 0 ? Number(order.total_amount).toFixed(2) : '',
