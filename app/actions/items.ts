@@ -34,8 +34,8 @@ export async function createItem(formData: FormData) {
         const sanitizedName = sanitizeString(validated.name);
 
         const supabase = await createClient();
-        const { data, error } = await supabase
-            .from('items')
+        const { data, error } = await (supabase
+            .from('items') as any)
             .insert({
                 company_id: user.company_id,
                 name: sanitizedName,
@@ -87,8 +87,8 @@ export async function updateItem(formData: FormData) {
         const sanitizedName = sanitizeString(validated.name);
 
         const supabase = await createClient();
-        const { data, error } = await supabase
-            .from('items')
+        const { data, error } = await (supabase
+            .from('items') as any)
             .update({
                 name: sanitizedName,
                 price: validated.price,
@@ -161,8 +161,8 @@ export async function deleteItem(formData: FormData) {
         }
 
         const supabase = await createClient();
-        const { error } = await supabase
-            .from('items')
+        const { error } = await (supabase
+            .from('items') as any)
             .update({
                 deleted_at: new Date().toISOString(),
                 deleted_by: user.id,

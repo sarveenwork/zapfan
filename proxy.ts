@@ -24,14 +24,14 @@ export async function proxy(request: NextRequest) {
                 getAll() {
                     return request.cookies.getAll();
                 },
-                setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) =>
+                setAll(cookiesToSet: any) {
+                    cookiesToSet.forEach(({ name, value, options }: any) =>
                         request.cookies.set(name, value)
                     );
                     response = NextResponse.next({
                         request,
                     });
-                    cookiesToSet.forEach(({ name, value, options }) =>
+                    cookiesToSet.forEach(({ name, value, options }: any) =>
                         response.cookies.set(name, value, options)
                     );
                 },
@@ -62,7 +62,7 @@ export async function proxy(request: NextRequest) {
                 }
 
                 if (profile) {
-                    if (profile.role === 'super_admin') {
+                    if ((profile as any).role === 'super_admin') {
                         return NextResponse.redirect(new URL('/admin', request.url));
                     } else {
                         return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -95,14 +95,14 @@ export async function proxy(request: NextRequest) {
 
     // Super admin routes
     if (pathname.startsWith('/admin')) {
-        if (profile.role !== 'super_admin') {
+        if ((profile as any).role !== 'super_admin') {
             return NextResponse.redirect(new URL('/unauthorized', request.url));
         }
     }
 
     // Company admin only routes - super admin should not access these
     if (pathname.startsWith('/pos') || pathname.startsWith('/dashboard') || pathname.startsWith('/items') || pathname.startsWith('/orders') || pathname.startsWith('/reports')) {
-        if (profile.role === 'super_admin') {
+        if ((profile as any).role === 'super_admin') {
             return NextResponse.redirect(new URL('/admin', request.url));
         }
     }

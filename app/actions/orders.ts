@@ -52,7 +52,7 @@ export async function createOrder(formData: FormData) {
         }
 
         // Create item map for quick lookup
-        const itemsMap = new Map(itemsData.map((item) => [item.id, item]));
+        const itemsMap = new Map((itemsData as any[]).map((item: any) => [item.id, item]));
 
         // Calculate total and prepare order items
         let totalAmount = 0;
@@ -76,8 +76,8 @@ export async function createOrder(formData: FormData) {
         }
 
         // Create order
-        const { data: order, error: orderError } = await supabase
-            .from('orders')
+        const { data: order, error: orderError } = await (supabase
+            .from('orders') as any)
             .insert({
                 company_id: user.company_id,
                 total_amount: totalAmount,
@@ -93,11 +93,11 @@ export async function createOrder(formData: FormData) {
         }
 
         // Create order items
-        const { error: orderItemsError } = await supabase
-            .from('order_items')
+        const { error: orderItemsError } = await (supabase
+            .from('order_items') as any)
             .insert(
                 orderItems.map((item) => ({
-                    order_id: order.id,
+                    order_id: (order as any).id,
                     ...item,
                 }))
             );
@@ -134,8 +134,8 @@ export async function refundOrder(formData: FormData) {
         const supabase = await createClient();
 
         // Check if order exists and belongs to user's company
-        const { data: order, error: orderError } = await supabase
-            .from('orders')
+        const { data: order, error: orderError } = await (supabase
+            .from('orders') as any)
             .select('*')
             .eq('id', validated.order_id)
             .eq('company_id', user.company_id)
@@ -145,13 +145,13 @@ export async function refundOrder(formData: FormData) {
             throw new Error('Order not found');
         }
 
-        if (order.status === 'refunded') {
+        if ((order as any).status === 'refunded') {
             throw new Error('Order is already refunded');
         }
 
         // Update order status
-        const { error: updateError } = await supabase
-            .from('orders')
+        const { error: updateError } = await (supabase
+            .from('orders') as any)
             .update({
                 status: 'refunded',
                 refunded_at: new Date().toISOString(),
@@ -209,8 +209,8 @@ export async function getOrders() {
         const endOfTodayUTC = fromZonedTime(endOfTodayMYT, MYT_TIMEZONE);
 
         // Fetch orders with order items for today only
-        const { data: orders, error: ordersError } = await supabase
-            .from('orders')
+        const { data: orders, error: ordersError } = await (supabase
+            .from('orders') as any)
             .select(
                 `
         *,

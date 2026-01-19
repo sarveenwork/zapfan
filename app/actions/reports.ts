@@ -69,8 +69,8 @@ export async function getReportData(startDate: string, endDate: string) {
         }
 
         // Fetch orders with order items
-        const { data: orders, error: ordersError } = await supabase
-            .from('orders')
+        const { data: ordersData, error: ordersError } = await (supabase
+            .from('orders') as any)
             .select(
                 `
         *,
@@ -86,15 +86,17 @@ export async function getReportData(startDate: string, endDate: string) {
             throw new Error('Failed to fetch report data');
         }
 
+        const orders = ordersData as any;
+
         // Calculate totals (exclude refunded orders)
-        const paidOrders = orders?.filter((o) => o.status === 'paid') || [];
+        const paidOrders = (orders as any)?.filter((o: any) => o.status === 'paid') || [];
         const totalRevenue = paidOrders.reduce(
-            (sum, order) => sum + Number(order.total_amount),
+            (sum: number, order: any) => sum + Number(order.total_amount),
             0
         );
         const totalOrders = paidOrders.length;
-        const cashCount = paidOrders.filter((o) => o.payment_type === 'cash').length;
-        const touchNGoCount = paidOrders.filter((o) => o.payment_type === 'touch_n_go').length;
+        const cashCount = paidOrders.filter((o: any) => o.payment_type === 'cash').length;
+        const touchNGoCount = paidOrders.filter((o: any) => o.payment_type === 'touch_n_go').length;
 
         return {
             success: true,
@@ -138,7 +140,7 @@ export async function exportReportToCSV(startDate: string, endDate: string) {
         const rows: string[][] = [];
         let totalSum = 0;
 
-        orders.forEach((order) => {
+        orders?.forEach((order: any) => {
             const zonedDate = toZonedTime(new Date(order.created_at), MYT_TIMEZONE);
             const dateStr = zonedDate.toLocaleDateString('en-MY');
             const timeStr = zonedDate.toLocaleTimeString('en-MY');

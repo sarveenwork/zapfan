@@ -21,7 +21,7 @@ function ToastItem({ toast, onClose }: ToastProps) {
     useEffect(() => {
         // Trigger animation
         setIsVisible(true);
-        
+
         // Auto-close after 5 seconds
         const timer = setTimeout(() => {
             setIsVisible(false);
@@ -90,9 +90,8 @@ function ToastItem({ toast, onClose }: ToastProps) {
 
     return (
         <div
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white min-w-[300px] max-w-md border transition-all duration-300 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-            }`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white min-w-[300px] max-w-md border transition-all duration-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                }`}
             style={styles}
         >
             <div className="flex-shrink-0">

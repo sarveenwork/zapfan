@@ -67,9 +67,9 @@ export default function OrdersPage() {
                         onClick={loadOrders}
                         disabled={loading}
                         className="px-4 py-2 rounded-md transition-colors text-white"
-                        style={{ 
-                            backgroundColor: loading ? '#ccc' : '#FF6F3C', 
-                            cursor: loading ? 'not-allowed' : 'pointer' 
+                        style={{
+                            backgroundColor: loading ? '#ccc' : '#FF6F3C',
+                            cursor: loading ? 'not-allowed' : 'pointer'
                         }}
                         onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#FF8F5C')}
                         onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#FF6F3C')}
@@ -139,11 +139,10 @@ export default function OrdersPage() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     <span
-                                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                            order.status === 'paid'
+                                                        className={`px-2 py-1 rounded-full text-xs font-medium ${order.status === 'paid'
                                                                 ? 'bg-green-100 text-green-800'
                                                                 : 'bg-red-100 text-red-800'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {order.status === 'paid' ? 'Paid' : 'Refunded'}
                                                     </span>

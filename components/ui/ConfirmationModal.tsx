@@ -28,13 +28,13 @@ export default function ConfirmationModal({
     const confirmButtonStyle =
         confirmColor === 'danger'
             ? {
-                  backgroundColor: '#FF4C4C',
-                  color: '#ffffff',
-              }
+                backgroundColor: '#FF4C4C',
+                color: '#ffffff',
+            }
             : {
-                  backgroundColor: '#FF6F3C',
-                  color: '#ffffff',
-              };
+                backgroundColor: '#FF6F3C',
+                color: '#ffffff',
+            };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

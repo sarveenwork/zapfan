@@ -21,17 +21,17 @@ export async function getDashboardMetrics() {
         const startOfTodayUTC = fromZonedTime(startOfToday, MYT_TIMEZONE);
 
         // Today's revenue (exclude refunded)
-        const { data: todayOrders } = await supabase
-            .from('orders')
+        const { data: todayOrders } = await (supabase
+            .from('orders') as any)
             .select('total_amount, payment_type')
             .eq('company_id', user.company_id)
             .eq('status', 'paid')
             .gte('created_at', startOfTodayUTC.toISOString());
 
-        const todayRevenue = todayOrders?.reduce((sum, order) => sum + Number(order.total_amount), 0) || 0;
-        const ordersToday = todayOrders?.length || 0;
-        const cashCount = todayOrders?.filter((o) => o.payment_type === 'cash').length || 0;
-        const touchNGoCount = todayOrders?.filter((o) => o.payment_type === 'touch_n_go').length || 0;
+        const todayRevenue = (todayOrders as any)?.reduce((sum: number, order: any) => sum + Number(order.total_amount), 0) || 0;
+        const ordersToday = (todayOrders as any)?.length || 0;
+        const cashCount = (todayOrders as any)?.filter((o: any) => o.payment_type === 'cash').length || 0;
+        const touchNGoCount = (todayOrders as any)?.filter((o: any) => o.payment_type === 'touch_n_go').length || 0;
 
         return {
             success: true,
@@ -79,7 +79,7 @@ export async function getDailySales(days: number = 30) {
 
         // Group by date in MYT timezone
         const dailyMap = new Map<string, number>();
-        orders.forEach((order) => {
+        (orders as any[]).forEach((order: any) => {
             const zonedDate = toZonedTime(new Date(order.created_at), MYT_TIMEZONE);
             const dateKey = format(zonedDate, 'yyyy-MM-dd');
             const current = dailyMap.get(dateKey) || 0;
@@ -131,7 +131,7 @@ export async function getWeeklySales(weeks: number = 12) {
 
         // Group by week in MYT timezone
         const weeklyMap = new Map<string, number>();
-        orders.forEach((order) => {
+        (orders as any[]).forEach((order: any) => {
             const zonedDate = toZonedTime(new Date(order.created_at), MYT_TIMEZONE);
             const year = zonedDate.getFullYear();
             const week = getWeekNumber(zonedDate);
@@ -185,7 +185,7 @@ export async function getMonthlySales(months: number = 12) {
 
         // Group by month in MYT timezone
         const monthlyMap = new Map<string, number>();
-        orders.forEach((order) => {
+        (orders as any[]).forEach((order: any) => {
             const zonedDate = toZonedTime(new Date(order.created_at), MYT_TIMEZONE);
             const monthKey = format(zonedDate, 'yyyy-MM');
             const current = monthlyMap.get(monthKey) || 0;
