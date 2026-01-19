@@ -45,6 +45,19 @@ export async function middleware(request: NextRequest) {
 
     const { pathname } = request.nextUrl;
 
+    // Check if there are any Supabase auth cookies present
+    // This helps detect if user is in the process of logging in (cookies being set)
+    const allCookies = request.cookies.getAll();
+    const hasAuthCookies = allCookies.some(cookie => 
+        cookie.name.includes('supabase') || 
+        cookie.name.includes('sb-') ||
+        cookie.name.includes('auth')
+    );
+
+    // Check referer to detect if we're coming from login (client-side redirect)
+    const referer = request.headers.get('referer');
+    const comingFromLogin = referer && new URL(referer).pathname === '/login';
+
     // Create URL helpers to avoid redirect loops
     const createRedirectUrl = (path: string) => {
         const url = request.nextUrl.clone();
@@ -53,9 +66,18 @@ export async function middleware(request: NextRequest) {
     };
 
     // CRITICAL: Never redirect to /login if we're already on /login (prevents loops)
+    // Also, if auth cookies are present or we just came from login, don't redirect (handles race conditions)
     const redirectToLogin = () => {
         if (pathname === '/login') {
             // Already on login page - don't redirect, just allow through
+            return response;
+        }
+        // If we just came from login page, don't redirect back (prevents loop from client-side redirects)
+        if (comingFromLogin) {
+            return response;
+        }
+        // If auth cookies are present, user might be logging in - allow through to prevent race condition
+        if (hasAuthCookies) {
             return response;
         }
         return NextResponse.redirect(createRedirectUrl('/login'));
@@ -92,7 +114,14 @@ export async function middleware(request: NextRequest) {
     }
 
     // Protected routes - redirect to login if not authenticated
+    // BUT: If auth cookies are present or we came from login, allow through (user might be in process of logging in)
+    // This prevents race conditions where cookies are being set but getUser() hasn't picked them up yet
     if (!user) {
+        // If we just came from login or have auth cookies, user is likely authenticating - allow through
+        // The page will handle showing an error if auth truly fails
+        if (comingFromLogin || hasAuthCookies) {
+            return response;
+        }
         return redirectToLogin();
     }
 
