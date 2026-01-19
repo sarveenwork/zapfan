@@ -332,10 +332,6 @@ export default function ReportsPage() {
                                 {/* Order Information */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-600">Order ID</p>
-                                        <p className="text-sm text-gray-900 mt-1">{selectedOrder.id}</p>
-                                    </div>
-                                    <div>
                                         <p className="text-sm font-medium text-gray-600">Date & Time</p>
                                         <p className="text-sm text-gray-900 mt-1">
                                             {format(new Date(selectedOrder.created_at), 'yyyy-MM-dd HH:mm:ss', { timeZone: MYT_TIMEZONE })}
@@ -377,9 +373,14 @@ export default function ReportsPage() {
                                                 {selectedOrder.order_items && selectedOrder.order_items.length > 0 ? (
                                                     selectedOrder.order_items.map((item: any, index: number) => {
                                                         const itemTotal = Number(item.item_price_snapshot) * item.quantity;
+                                                        const category = item.items?.category || '';
+                                                        const categoryLabel = category === 'food' ? 'food' : category === 'drink' ? 'drink' : '';
+                                                        const displayName = categoryLabel 
+                                                            ? `${item.item_name_snapshot} (${categoryLabel})`
+                                                            : item.item_name_snapshot;
                                                         return (
                                                             <tr key={index}>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">{item.item_name_snapshot}</td>
+                                                                <td className="px-4 py-3 text-sm text-gray-900">{displayName}</td>
                                                                 <td className="px-4 py-3 text-sm text-gray-500">{item.quantity}</td>
                                                                 <td className="px-4 py-3 text-sm text-gray-500">RM {Number(item.item_price_snapshot).toFixed(2)}</td>
                                                                 <td className="px-4 py-3 text-sm font-medium text-gray-900">RM {itemTotal.toFixed(2)}</td>

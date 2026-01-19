@@ -68,13 +68,16 @@ export async function getReportData(startDate: string, endDate: string) {
             endUTC.setMilliseconds(999);
         }
 
-        // Fetch orders with order items
+        // Fetch orders with order items and item category
         const { data: ordersData, error: ordersError } = await (supabase
             .from('orders') as any)
             .select(
                 `
         *,
-        order_items (*)
+        order_items (
+          *,
+          items (category)
+        )
       `
             )
             .eq('company_id', user.company_id)

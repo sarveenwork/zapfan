@@ -6,7 +6,7 @@ import { createOrder } from '@/app/actions/orders';
 import { useToast } from '@/contexts/ToastContext';
 import { createClient } from '@/lib/supabase/client';
 import { signOut } from '@/app/actions/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface Item {
     id: string;
@@ -26,6 +26,7 @@ interface CartItem {
 export default function POSPage() {
     const { showSuccess, showError } = useToast();
     const router = useRouter();
+    const pathname = usePathname();
     const [items, setItems] = useState<Item[]>([]);
     const [cart, setCart] = useState<CartItem[]>([]);
     const [paymentType, setPaymentType] = useState<'cash' | 'touch_n_go' | ''>('');
@@ -45,11 +46,14 @@ export default function POSPage() {
         };
     }, []);
 
-    // Fullscreen API handlers
+    // Fullscreen API handlers - sync state with actual fullscreen status
     useEffect(() => {
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            setIsFullscreen(isCurrentlyFullscreen());
         };
+
+        // Set initial state
+        setIsFullscreen(isCurrentlyFullscreen());
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -64,7 +68,32 @@ export default function POSPage() {
         };
     }, []);
 
+    // Check if fullscreen is supported
+    function isFullscreenSupported(): boolean {
+        const element = document.documentElement;
+        return !!(
+            element.requestFullscreen ||
+            (element as any).webkitRequestFullscreen ||
+            (element as any).mozRequestFullScreen ||
+            (element as any).msRequestFullscreen
+        );
+    }
+
+    // Check if currently in fullscreen
+    function isCurrentlyFullscreen(): boolean {
+        return !!(
+            document.fullscreenElement ||
+            (document as any).webkitFullscreenElement ||
+            (document as any).mozFullScreenElement ||
+            (document as any).msFullscreenElement
+        );
+    }
+
     async function handleEnterFullscreen() {
+        if (!isFullscreenSupported()) {
+            return; // Silently fail if not supported
+        }
+
         try {
             const element = document.documentElement;
             if (element.requestFullscreen) {
@@ -77,11 +106,17 @@ export default function POSPage() {
                 await (element as any).msRequestFullscreen();
             }
         } catch (error) {
-            showError('Fullscreen not available');
+            // Silently handle errors - fullscreen may not be available due to user gesture requirements
+            // or browser restrictions
+            console.debug('Fullscreen entry failed:', error);
         }
     }
 
     async function handleExitFullscreen() {
+        if (!isCurrentlyFullscreen()) {
+            return; // Already not in fullscreen
+        }
+
         try {
             if (document.exitFullscreen) {
                 await document.exitFullscreen();
@@ -93,9 +128,47 @@ export default function POSPage() {
                 await (document as any).msExitFullscreen();
             }
         } catch (error) {
-            showError('Could not exit fullscreen');
+            // Silently handle errors
+            console.debug('Fullscreen exit failed:', error);
         }
     }
+
+    // Automatic fullscreen management based on route
+    useEffect(() => {
+        // Only manage fullscreen if API is supported
+        if (!isFullscreenSupported()) {
+            return;
+        }
+
+        const isOnPOSRoute = pathname === '/pos';
+
+        if (isOnPOSRoute) {
+            // Enter fullscreen when on POS route (if not already)
+            // Note: Some browsers require user gesture for fullscreen, so this may not always work
+            // User can still manually click the fullscreen button if auto-entry fails
+            if (!isCurrentlyFullscreen()) {
+                // Small delay to ensure smooth transition and allow DOM to settle
+                const timer = setTimeout(() => {
+                    handleEnterFullscreen();
+                }, 100);
+                return () => clearTimeout(timer);
+            }
+        } else {
+            // Exit fullscreen when leaving POS route
+            if (isCurrentlyFullscreen()) {
+                handleExitFullscreen();
+            }
+        }
+    }, [pathname]);
+
+    // Cleanup: Exit fullscreen when component unmounts (user navigates away)
+    useEffect(() => {
+        return () => {
+            if (isCurrentlyFullscreen()) {
+                handleExitFullscreen();
+            }
+        };
+    }, []);
 
     useEffect(() => {
         loadItems();

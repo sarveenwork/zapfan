@@ -120,11 +120,18 @@ export default function OrdersPage() {
                                                     <div className="max-w-xs">
                                                         {order.order_items && order.order_items.length > 0 ? (
                                                             <div className="space-y-1">
-                                                                {order.order_items.map((item: any, idx: number) => (
-                                                                    <div key={idx} className="text-xs">
-                                                                        {item.item_name_snapshot} × {item.quantity} = RM {(Number(item.item_price_snapshot) * item.quantity).toFixed(2)}
-                                                                    </div>
-                                                                ))}
+                                                                {order.order_items.map((item: any, idx: number) => {
+                                                                    const category = item.items?.category || '';
+                                                                    const categoryLabel = category === 'food' ? 'food' : category === 'drink' ? 'drink' : '';
+                                                                    const displayName = categoryLabel 
+                                                                        ? `${item.item_name_snapshot} (${categoryLabel})`
+                                                                        : item.item_name_snapshot;
+                                                                    return (
+                                                                        <div key={idx} className="text-xs">
+                                                                            {displayName} × {item.quantity} = RM {(Number(item.item_price_snapshot) * item.quantity).toFixed(2)}
+                                                                        </div>
+                                                                    );
+                                                                })}
                                                             </div>
                                                         ) : (
                                                             <span>No items</span>

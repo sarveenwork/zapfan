@@ -208,13 +208,16 @@ export async function getOrders() {
         // Convert MYT time to UTC for database query
         const endOfTodayUTC = fromZonedTime(endOfTodayMYT, MYT_TIMEZONE);
 
-        // Fetch orders with order items for today only
+        // Fetch orders with order items and item category for today only
         const { data: orders, error: ordersError } = await (supabase
             .from('orders') as any)
             .select(
                 `
         *,
-        order_items (*)
+        order_items (
+          *,
+          items (category)
+        )
       `
             )
             .eq('company_id', user.company_id)
