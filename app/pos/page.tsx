@@ -171,12 +171,22 @@ export default function POSPage() {
 
     return (
         <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: '#FFF8F0' }}>
+            {/* 
+                POS Layout Requirements:
+                - Tablet-first: Always uses left-right layout (never top/bottom stacking)
+                - Two columns at all breakpoints ≥ tablet
+                - Left: Scrollable items list with category tabs
+                - Right: Fixed order summary with payment (no scrolling)
+                - Pay button always visible
+                - Touch-friendly: All buttons ≥48px
+                - No body scrolling
+            */}
             {/* Fixed Header */}
             <header className="flex-shrink-0 shadow-sm border-b" style={{ backgroundColor: '#ffffff', borderColor: '#e5e5e5' }}>
                 <div className="h-16 px-6 flex items-center justify-between">
                     <button
                         onClick={() => router.push('/dashboard')}
-                        className="text-xl font-bold transition-colors"
+                        className="text-xl font-bold transition-colors min-h-[48px] px-4 py-2 flex items-center"
                         style={{ color: '#333333', cursor: 'pointer' }}
                         onMouseEnter={(e) => e.currentTarget.style.color = '#FF6F3C'}
                         onMouseLeave={(e) => e.currentTarget.style.color = '#333333'}
@@ -185,7 +195,7 @@ export default function POSPage() {
                     </button>
                     <button
                         onClick={handleSignOut}
-                        className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                        className="px-4 py-2 rounded-md text-sm font-medium transition-colors min-h-[48px] flex items-center"
                         style={{ color: '#777777', cursor: 'pointer' }}
                         onMouseEnter={(e) => e.currentTarget.style.color = '#333333'}
                         onMouseLeave={(e) => e.currentTarget.style.color = '#777777'}
@@ -195,17 +205,17 @@ export default function POSPage() {
                 </div>
             </header>
 
-            {/* Main Content - Two Column Layout */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-0 overflow-hidden">
+            {/* Main Content - Two Column Layout - ALWAYS side-by-side on tablet+ */}
+            <div className="pos-main-grid flex-1 grid grid-cols-[2fr_1fr] gap-0 overflow-hidden min-h-0">
                 {/* Left Panel - Items List (Scrollable) */}
-                <div className="lg:col-span-2 flex flex-col overflow-hidden">
+                <div className="flex flex-col overflow-hidden min-h-0">
                     <div className="flex-shrink-0 px-6 py-4 border-b" style={{ backgroundColor: '#ffffff', borderColor: '#e5e5e5' }}>
                         <h2 className="text-2xl font-bold mb-4" style={{ color: '#333333' }}>Items</h2>
                         {/* Category Tabs */}
                         <div className="flex space-x-2">
                             <button
                                 onClick={() => setActiveTab('food')}
-                                className="px-6 py-3 rounded-lg font-semibold text-lg transition-colors"
+                                className="px-6 py-3 rounded-lg font-semibold text-lg transition-colors min-h-[48px] min-w-[48px]"
                                 style={activeTab === 'food' ? {
                                     backgroundColor: '#FF6F3C',
                                     color: '#ffffff',
@@ -230,7 +240,7 @@ export default function POSPage() {
                             </button>
                             <button
                                 onClick={() => setActiveTab('drink')}
-                                className="px-6 py-3 rounded-lg font-semibold text-lg transition-colors"
+                                className="px-6 py-3 rounded-lg font-semibold text-lg transition-colors min-h-[48px] min-w-[48px]"
                                 style={activeTab === 'drink' ? {
                                     backgroundColor: '#FF6F3C',
                                     color: '#ffffff',
@@ -265,12 +275,12 @@ export default function POSPage() {
                                     No {activeTab === 'food' ? 'food' : 'drink'} items available
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
                                     {filteredItems.map((item) => (
                                         <button
                                             key={item.id}
                                             onClick={() => addToCart(item)}
-                                            className="border-2 rounded-lg p-4 text-left transition-colors min-h-[140px] flex flex-col justify-between"
+                                            className="border-2 rounded-lg p-4 text-left transition-colors min-h-[140px] flex flex-col justify-between min-w-[48px]"
                                             style={{
                                                 backgroundColor: '#FFF4E6',
                                                 borderColor: '#FFD4B8',
@@ -300,7 +310,7 @@ export default function POSPage() {
                 </div>
 
                 {/* Right Panel - Order Summary (Fixed, No Scroll) */}
-                <div className="lg:col-span-1 flex flex-col overflow-hidden border-l" style={{ backgroundColor: '#ffffff', borderColor: '#e5e5e5' }}>
+                <div className="flex flex-col overflow-hidden border-l min-h-0" style={{ backgroundColor: '#ffffff', borderColor: '#e5e5e5' }}>
                     <div className="flex-shrink-0 px-6 py-4 border-b" style={{ borderColor: '#e5e5e5' }}>
                         <h2 className="text-2xl font-bold" style={{ color: '#333333' }}>Order</h2>
                     </div>
@@ -333,17 +343,17 @@ export default function POSPage() {
                                             <div className="flex items-center space-x-2 ml-2">
                                                 <button
                                                     onClick={() => updateQuantity(item.item_id, -1)}
-                                                    className="w-8 h-8 rounded flex items-center justify-center font-bold transition-colors flex-shrink-0"
+                                                    className="w-12 h-12 rounded flex items-center justify-center font-bold transition-colors flex-shrink-0 text-xl"
                                                     style={{ backgroundColor: '#e5e5e5', cursor: 'pointer' }}
                                                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#d4d4d4'}
                                                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#e5e5e5'}
                                                 >
                                                     −
                                                 </button>
-                                                <span className="w-8 text-center font-medium flex-shrink-0" style={{ color: '#333333' }}>{item.quantity}</span>
+                                                <span className="w-12 text-center font-medium flex-shrink-0 text-lg" style={{ color: '#333333' }}>{item.quantity}</span>
                                                 <button
                                                     onClick={() => updateQuantity(item.item_id, 1)}
-                                                    className="w-8 h-8 rounded flex items-center justify-center font-bold transition-colors flex-shrink-0"
+                                                    className="w-12 h-12 rounded flex items-center justify-center font-bold transition-colors flex-shrink-0 text-xl"
                                                     style={{ backgroundColor: '#e5e5e5', cursor: 'pointer' }}
                                                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#d4d4d4'}
                                                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#e5e5e5'}
@@ -352,7 +362,7 @@ export default function POSPage() {
                                                 </button>
                                                 <button
                                                     onClick={() => removeFromCart(item.item_id)}
-                                                    className="ml-2 transition-colors flex-shrink-0"
+                                                    className="ml-2 transition-colors flex-shrink-0 w-12 h-12 flex items-center justify-center text-2xl font-bold"
                                                     style={{ color: '#FF4C4C', cursor: 'pointer' }}
                                                     onMouseEnter={(e) => e.currentTarget.style.color = '#CC0000'}
                                                     onMouseLeave={(e) => e.currentTarget.style.color = '#FF4C4C'}
@@ -382,7 +392,7 @@ export default function POSPage() {
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
                                         onClick={() => setPaymentType('cash')}
-                                        className="p-3 rounded-lg border-2 font-medium transition-colors"
+                                        className="p-3 rounded-lg border-2 font-medium transition-colors min-h-[48px]"
                                         style={paymentType === 'cash' ? {
                                             borderColor: '#FF6F3C',
                                             backgroundColor: '#FFF4E6',
@@ -408,7 +418,7 @@ export default function POSPage() {
                                     </button>
                                     <button
                                         onClick={() => setPaymentType('touch_n_go')}
-                                        className="p-3 rounded-lg border-2 font-medium transition-colors"
+                                        className="p-3 rounded-lg border-2 font-medium transition-colors min-h-[48px]"
                                         style={paymentType === 'touch_n_go' ? {
                                             borderColor: '#FF6F3C',
                                             backgroundColor: '#FFF4E6',
@@ -438,7 +448,7 @@ export default function POSPage() {
                             <button
                                 onClick={handlePay}
                                 disabled={processing || !paymentType || cart.length === 0}
-                                className="w-full disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors"
+                                className="w-full disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors min-h-[56px]"
                                 style={{
                                     backgroundColor: (processing || !paymentType || cart.length === 0) ? '#ccc' : '#FF6F3C',
                                     cursor: (processing || !paymentType || cart.length === 0) ? 'not-allowed' : 'pointer'

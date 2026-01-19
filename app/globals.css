@@ -46,3 +46,24 @@ nav a:hover {
 a.hover\:bg-orange-400:hover {
   background-color: #FF8F5C !important;
 }
+
+/* POS Page - Strict Tablet-First Layout */
+/* Ensure two-column layout never stacks on tablet+ */
+@media (min-width: 768px) {
+  /* Force two-column grid layout on tablet and above */
+  .pos-main-grid {
+    grid-template-columns: 2fr 1fr !important;
+    display: grid !important;
+  }
+  
+  /* Prevent any flex-direction changes that could cause stacking */
+  .pos-main-grid > * {
+    flex-direction: column !important;
+  }
+}
+
+/* Ensure touch-friendly minimum sizes */
+.pos-button {
+  min-height: 48px;
+  min-width: 48px;
+}
