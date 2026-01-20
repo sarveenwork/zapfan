@@ -1,6 +1,6 @@
 {
-  "name": "MoodieFoodie POS",
-  "short_name": "MoodieFoodie",
+  "name": "ZapFan POS",
+  "short_name": "ZapFan",
   "description": "Multi-tenant Point of Sale System",
   "start_url": "/pos",
   "display": "standalone",
@@ -9,13 +9,13 @@
   "orientation": "landscape",
   "icons": [
     {
-      "src": "/assets/MF.png",
+      "src": "/assets/ZF-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/MF.png",
+      "src": "/assets/ZF-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -31,7 +31,7 @@
       "url": "/pos",
       "icons": [
         {
-          "src": "/assets/MF.png",
+          "src": "/assets/ZF-logo.png",
           "sizes": "192x192"
         }
       ]

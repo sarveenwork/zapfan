@@ -1,6 +1,6 @@
 # Assets Folder
 
-This folder contains static assets for the MoodieFoodie application.
+This folder contains static assets for the ZapFan application.
 
 ## Logo File Setup
 

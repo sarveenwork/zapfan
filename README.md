@@ -1,4 +1,4 @@
-# MoodieFoodie
+# ZapFan
 
 A production-grade, security-first, multi-tenant Point of Sale (POS) system.
 
@@ -36,4 +36,4 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 - CSV export functionality
 
 For detailed setup instructions, see `SETUP.md`.
-# moodiefoodie
+# zapfan

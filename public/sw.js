@@ -1,5 +1,5 @@
 // Service Worker for PWA
-const CACHE_NAME = 'moodiefoodie-pos-v1';
+const CACHE_NAME = 'zapfan-pos-v1';
 const urlsToCache = [
   '/',
   '/pos',

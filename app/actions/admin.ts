@@ -143,7 +143,7 @@ export async function createUser(formData: FormData) {
         // Users will login with just the username part
         const emailForAuth = validated.email.includes('@')
             ? validated.email
-            : `${validated.email}@moodiefoodie.com`;
+            : `${validated.email}@zapfan.com`;
 
         // Create auth user using admin client
         // Username is stored as email in Supabase Auth
@@ -208,7 +208,7 @@ export async function updateUser(formData: FormData) {
             // Supabase Auth requires email format, so we append domain if username doesn't contain @
             const emailForAuth = validated.email.includes('@')
                 ? validated.email
-                : `${validated.email}@moodiefoodie.com`;
+                : `${validated.email}@zapfan.com`;
 
             const { error: emailError } = await adminClient.auth.admin.updateUserById(
                 validated.id,

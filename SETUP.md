@@ -26,7 +26,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 1. Go to **Authentication** → **Users** in Supabase
 2. Create user:
-   - Email: `sarveenmf@moodiefoodie.com`
+   - Email: `sarveenmf@zapfan.com`
    - Password: `Rsarveen@123456`
    - Auto Confirm: ✅
 3. Copy the User ID and run:
@@ -42,4 +42,4 @@ VALUES ('USER_ID', NULL, 'super_admin', 'USER_ID');
 npm run dev
 ```
 
-Login with: `sarveenmf@moodiefoodie.com` / `Rsarveen@123456`
+Login with: `sarveenmf@zapfan.com` / `Rsarveen@123456`

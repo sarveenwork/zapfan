@@ -15,14 +15,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MoodieFoodie",
+  title: "ZapFan",
   description: "Multi-tenant Point of Sale System",
   manifest: "/manifest.json",
   themeColor: "#FF6F3C",
+  icons: {
+    icon: "/assets/ZF-logo.png",
+    apple: "/assets/ZF-logo.png",
+  },
+  openGraph: {
+    title: "ZapFan",
+    description: "Multi-tenant Point of Sale System",
+    images: ["/assets/ZF-logo.png"],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/assets/ZF-logo.png"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "MoodieFoodie",
+    title: "ZapFan",
   },
   viewport: {
     width: "device-width",

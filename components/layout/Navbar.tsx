@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 export default function Navbar() {
     const router = useRouter();
     const [userRole, setUserRole] = useState<string | null>(null);
-    const [companyName, setCompanyName] = useState<string>('MoodieFoodie');
+    const [companyName, setCompanyName] = useState<string>('ZapFan');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -32,13 +32,13 @@ export default function Navbar() {
                     if (profile.companies && profile.companies.name) {
                         setCompanyName(profile.companies.name);
                     } else {
-                        setCompanyName('MoodieFoodie');
+                        setCompanyName('ZapFan');
                     }
                 } else {
-                    setCompanyName('MoodieFoodie');
+                    setCompanyName('ZapFan');
                 }
             } else {
-                setCompanyName('MoodieFoodie');
+                setCompanyName('ZapFan');
             }
             setLoading(false);
         }

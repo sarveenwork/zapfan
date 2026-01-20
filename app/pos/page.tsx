@@ -33,7 +33,7 @@ export default function POSPage() {
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState('');
-    const [companyName, setCompanyName] = useState<string>('MoodieFoodie');
+    const [companyName, setCompanyName] = useState<string>('ZapFan');
     const [activeTab, setActiveTab] = useState<'food' | 'drink'>('food');
     const [signingOut, setSigningOut] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -190,14 +190,14 @@ export default function POSPage() {
                 if (profile && (profile as any).companies && (profile as any).companies.name) {
                     setCompanyName((profile as any).companies.name);
                 } else {
-                    setCompanyName('MoodieFoodie');
+                    setCompanyName('ZapFan');
                 }
             } else {
-                setCompanyName('MoodieFoodie');
+                setCompanyName('ZapFan');
             }
         } catch (error) {
             // Keep default company name on error
-            setCompanyName('MoodieFoodie');
+            setCompanyName('ZapFan');
         }
     }
 

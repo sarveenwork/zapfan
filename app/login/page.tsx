@@ -61,7 +61,7 @@ export default function LoginPage() {
             // This allows users to login with just their username
             const emailForAuth = validated.username.includes('@')
                 ? validated.username
-                : `${validated.username}@moodiefoodie.com`;
+                : `${validated.username}@zapfan.com`;
 
             const supabase = createClient();
             const { data, error: authError } = await supabase.auth.signInWithPassword({
@@ -130,7 +130,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md space-y-8 rounded-lg p-8 shadow-lg" style={{ backgroundColor: '#ffffff' }}>
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-bold tracking-tight" style={{ color: '#333333' }}>
-                        MoodieFoodie
+                        ZapFan
                     </h2>
                     <p className="mt-2 text-center text-sm" style={{ color: '#777777' }}>
                         Sign in to your account

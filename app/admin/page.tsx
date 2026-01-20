@@ -351,7 +351,7 @@ export default function AdminPage() {
                                         {users.map((user) => (
                                             <tr key={user.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {user.email ? user.email.replace('@moodiefoodie.com', '').replace('@moodiefoodie.local', '') : user.id.substring(0, 8) + '...'}
+                                                    {user.email ? user.email.replace('@zapfan.com', '').replace('@zapfan.local', '') : user.id.substring(0, 8) + '...'}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {user.role}
@@ -472,12 +472,12 @@ export default function AdminPage() {
                                                 type="text"
                                                 name="email"
                                                 required
-                                                defaultValue={editingUser.email?.replace('@moodiefoodie.com', '').replace('@moodiefoodie.local', '') || ''}
+                                                defaultValue={editingUser.email?.replace('@zapfan.com', '').replace('@zapfan.local', '') || ''}
                                                 placeholder="Enter username"
                                                 className="w-full rounded-md border border-gray-300 px-3 py-2"
                                             />
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Username will be updated (without @moodiefoodie.com)
+                                                Username will be updated (without @zapfan.com)
                                             </p>
                                         </div>
                                         <div className="mb-4">
